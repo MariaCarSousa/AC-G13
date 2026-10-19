@@ -1,12 +1,6 @@
-"""Shared loader for the hockey CSVs.
-
-Usage (from a notebook in notebooks/):
-    import sys; sys.path.append("..")
-    from src.data import load_table, load_all
-
-    teams = load_table("Teams")
-    tables = load_all()          # dict: table name -> DataFrame
-"""
+# Loads the CSV files with the right column types.
+# Usage: from src.data import load_table
+#        teams = load_table("Teams")
 
 from pathlib import Path
 
