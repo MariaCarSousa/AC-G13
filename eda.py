@@ -53,8 +53,10 @@ print("\nCorrelation points % last season vs this season:", round(a["pts_pct"].c
 # baseline: same order as last season (best team of each division last season goes first)
 a["prev_div_winner"] = a.groupby(["year", "divID"])["prev_pts_pct"].rank(ascending=False, method="first") == 1
 a["baseline_rank"] = conference_rank(a, "prev_div_winner", ["prev_pts_pct"])
-a["rank_error"] = (a["conf_rank"] - a["baseline_rank"]).abs()
-print("Baseline mean rank error per season:")
+# ranks go from 0 (first) to 1 (last), because the number of teams changes between seasons
+a["conf_teams"] = a.groupby(["year", "confID"])["tmID"].transform("count")
+a["rank_error"] = (a["conf_rank"] - a["baseline_rank"]).abs() / (a["conf_teams"] - 1)
+print("Baseline mean rank error per season (0 to 1 scale):")
 print(a[a["year"] >= 2001].groupby("year")["rank_error"].mean().round(2))
 
 plt.scatter(a["prev_pts_pct"], a["pts_pct"], alpha=0.3, s=10)
