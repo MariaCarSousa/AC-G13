@@ -1,31 +1,31 @@
-confID,pred_conf_rank,pred_rank_norm,name,divID,pred_pts_pct
-EC,1,0.0,Philadelphia Flyers,AT,0.5796747967479674
-EC,2,0.07142857142857142,Washington Capitals,SE,0.576829268292683
-EC,3,0.14285714285714285,Boston Bruins,NE,0.5638211382113821
-EC,4,0.21428571428571427,New Jersey Devils,AT,0.5788617886178862
-EC,5,0.2857142857142857,Buffalo Sabres,NE,0.5577235772357725
-EC,6,0.35714285714285715,Ottawa Senators,NE,0.5516260162601625
-EC,7,0.42857142857142855,New York Rangers,AT,0.5410569105691057
-EC,8,0.5,Carolina Hurricanes,SE,0.5382113821138212
-EC,9,0.5714285714285714,Pittsburgh Penguins,AT,0.5373983739837398
-EC,10,0.6428571428571429,Montreal Canadiens,NE,0.5321138211382113
-EC,11,0.7142857142857143,Atlanta Thrashers,SE,0.5219512195121951
-EC,12,0.7857142857142857,Florida Panthers,SE,0.5215447154471545
-EC,13,0.8571428571428571,Tampa Bay Lightning,SE,0.5117886178861789
-EC,14,0.9285714285714286,New York Islanders,AT,0.5097560975609756
-EC,15,1.0,Toronto Maple Leafs,NE,0.48252032520325205
-WC,1,0.0,Detroit Red Wings,CE,0.591869918699187
-WC,2,0.07142857142857142,San Jose Sharks,PC,0.5841463414634146
-WC,3,0.14285714285714285,Vancouver Canucks,NW,0.5540650406504066
-WC,4,0.21428571428571427,Los Angeles Kings,PC,0.5528455284552846
-WC,5,0.2857142857142857,Phoenix Coyotes,PC,0.5516260162601626
-WC,6,0.35714285714285715,Colorado Avalanche,NW,0.5475609756097561
-WC,7,0.42857142857142855,Chicago Blackhawks,CE,0.5447154471544716
-WC,8,0.5,Minnesota Wild,NW,0.5369918699186992
-WC,9,0.5714285714285714,Dallas Stars,PC,0.5357723577235772
-WC,10,0.6428571428571429,St. Louis Blues,CE,0.5317073170731708
-WC,11,0.7142857142857143,Calgary Flames,NW,0.5313008130081301
-WC,12,0.7857142857142857,Anaheim Ducks,PC,0.5313008130081301
-WC,13,0.8571428571428571,Nashville Predators,CE,0.5300813008130082
-WC,14,0.9285714285714286,Columbus Blue Jackets,CE,0.5048780487804877
-WC,15,1.0,Edmonton Oilers,NW,0.5020325203252033
+conference,predicted_rank,team,division,predicted_rank_0_to_1,predicted_points_%
+Eastern Conference,1,Washington Capitals,Southeast Division,0.0,0.612
+Eastern Conference,2,New Jersey Devils,Atlantic Division,0.071,0.612
+Eastern Conference,3,Boston Bruins,Northeast Division,0.143,0.599
+Eastern Conference,4,Pittsburgh Penguins,Atlantic Division,0.214,0.586
+Eastern Conference,5,Philadelphia Flyers,Atlantic Division,0.286,0.58
+Eastern Conference,6,Montreal Canadiens,Northeast Division,0.357,0.572
+Eastern Conference,7,New York Rangers,Atlantic Division,0.429,0.569
+Eastern Conference,8,Buffalo Sabres,Northeast Division,0.5,0.559
+Eastern Conference,9,Ottawa Senators,Northeast Division,0.571,0.544
+Eastern Conference,10,Florida Panthers,Southeast Division,0.643,0.517
+Eastern Conference,11,Atlanta Thrashers,Southeast Division,0.714,0.511
+Eastern Conference,12,Carolina Hurricanes,Southeast Division,0.786,0.51
+Eastern Conference,13,Toronto Maple Leafs,Northeast Division,0.857,0.508
+Eastern Conference,14,Tampa Bay Lightning,Southeast Division,0.929,0.506
+Eastern Conference,15,New York Islanders,Atlantic Division,1.0,0.498
+Western Conference,1,San Jose Sharks,Pacific Division,0.0,0.621
+Western Conference,2,Detroit Red Wings,Central Division,0.071,0.615
+Western Conference,3,Vancouver Canucks,Northwest Division,0.143,0.584
+Western Conference,4,Chicago Blackhawks,Central Division,0.214,0.613
+Western Conference,5,Phoenix Coyotes,Pacific Division,0.286,0.574
+Western Conference,6,Los Angeles Kings,Pacific Division,0.357,0.571
+Western Conference,7,Calgary Flames,Northwest Division,0.429,0.569
+Western Conference,8,St. Louis Blues,Central Division,0.5,0.564
+Western Conference,9,Minnesota Wild,Northwest Division,0.571,0.562
+Western Conference,10,Colorado Avalanche,Northwest Division,0.643,0.555
+Western Conference,11,Anaheim Ducks,Pacific Division,0.714,0.552
+Western Conference,12,Nashville Predators,Central Division,0.786,0.54
+Western Conference,13,Dallas Stars,Pacific Division,0.857,0.524
+Western Conference,14,Columbus Blue Jackets,Central Division,0.929,0.514
+Western Conference,15,Edmonton Oilers,Northwest Division,1.0,0.48

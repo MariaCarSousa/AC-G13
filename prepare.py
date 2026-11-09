@@ -176,7 +176,9 @@ with_prev AS (
     WINDOW w AS (PARTITION BY franchID ORDER BY year)
 )
 SELECT
-    year, franchID, tmID, name, confID, divID,
+    year, franchID, tmID, name,
+    conf.Fullname AS conference,
+    div.Fullname AS division,
 
     -- targets
     pts_pct,
@@ -206,6 +208,8 @@ SELECT
     (SELECT COUNT(*) FROM AwardsCoaches WHERE coachID = s.first_coach AND year < s.year) AS coach_awards
 
 FROM with_prev s
+LEFT JOIN abbrev conf ON conf.Type = 'Conference' AND conf.Code = s.confID
+LEFT JOIN abbrev div ON div.Type = 'Division' AND div.Code = s.divID
 WHERE year >= {FIRST_YEAR}
 ORDER BY year, confID, conf_rank
 """
@@ -217,6 +221,53 @@ next_year = df["year"] == NEXT_YEAR
 not_known_yet = ["coach", "coach_new", "coach_seasons_with_team", "coach_seasons",
                  "coach_win_pct", "coach_playoff_wins", "coach_awards"]
 df.loc[next_year, not_known_yet] = None
+
+
+# ---------- 5. names that are easier to read ----------
+
+df = df.rename(columns={
+    "franchID": "franchise_id",
+    "tmID": "team_id",
+    "name": "team",
+    # targets
+    "pts_pct": "points_%",
+    "conf_rank": "conference_rank",
+    "rank_norm": "rank_0_to_1",
+    "coach_changed": "coach_changed_in_season",
+    # team, last season
+    "prev_pts_pct": "last_season_points_%",
+    "avg3_pts_pct": "last_3_seasons_points_%",
+    "pts_pct_trend": "last_season_points_%_change",
+    "prev_rank_norm": "last_season_rank_0_to_1",
+    "prev_gf_pg": "last_season_goals_for_per_game",
+    "prev_ga_pg": "last_season_goals_against_per_game",
+    "prev_pp_pct": "last_season_power_play_%",
+    "prev_pk_pct": "last_season_penalty_kill_%",
+    "prev_pim_pg": "last_season_penalty_minutes_per_game",
+    "prev_made_playoffs": "last_season_made_playoffs",
+    "prev_playoff_wins": "last_season_playoff_wins",
+    # players
+    "avg_age": "players_avg_age",
+    "last_season_pts": "players_last_season_points",
+    "top3_pts_pg": "top3_players_points_per_game",
+    "n_20_goal_players": "players_with_20_goals",
+    "player_awards": "players_awards",
+    "goalie_save_pct": "goalies_last_season_save_%",
+    # coach
+    "coach": "coach_id",
+    "coach_new": "coach_new_this_season",
+    "prev_coach_changed": "last_season_coach_changed",
+    "coach_seasons": "coach_seasons_total",
+    "coach_win_pct": "coach_win_%",
+})
+
+# yes/no columns and counts as whole numbers (1 instead of 1.0), the rest with 3 decimals
+whole_numbers = ["conference_rank", "coach_changed_in_season", "last_season_made_playoffs",
+                 "last_season_playoff_wins", "players_last_season_points", "players_with_20_goals",
+                 "players_awards", "coach_new_this_season", "last_season_coach_changed",
+                 "coach_seasons_with_team", "coach_seasons_total", "coach_playoff_wins", "coach_awards"]
+df[whole_numbers] = df[whole_numbers].astype("Int64")
+df = df.round(3)
 
 df.to_sql("team_seasons", conn, if_exists="replace", index=False)
 conn.close()
