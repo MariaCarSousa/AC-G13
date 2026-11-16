@@ -1,5 +1,5 @@
 # Builds one row per team and season (outputs/team_seasons.csv), for every
-# league and season in the data (1909 on) plus the season we have to predict.
+# league and season in the data (1909 on) plus the next seasons we have to predict.
 # Each row has the targets of that season and features we already know
 # the day before the season starts: the team and its history, the coach and
 # their history, and the players of the team and their history.
@@ -12,19 +12,27 @@ import pandas as pd
 DB_PATH = "outputs/hockey.db"
 
 conn = sqlite3.connect(DB_PATH)
-# the season after the last one in the data (2010 with the data we have now)
-NEXT_YEAR = conn.execute("SELECT MAX(year) FROM Teams").fetchone()[0] + 1
+# The teacher will test the next seasons (2010 to 2013). Any season added to Teams
+# is used as it is. To be able to run the code before that, we also add the next
+# 4 seasons after the last one in Teams, copying the NHL teams of that season with
+# empty stats. Their features come from the seasons we already have.
+LAST_YEAR = conn.execute("SELECT MAX(year) FROM Teams").fetchone()[0]
+NEXT_YEARS = range(LAST_YEAR + 1, LAST_YEAR + 5)
 
 
 # ---------- 1. team stats of each season ----------
-# Any season in Teams can be predicted (the teacher can add a new one).
-# We also add the season after the last one, copying the teams of the last
-# season with empty stats. Their features come from the seasons before.
+
+copies = "\nUNION ALL\n".join(f"""
+SELECT {y}, lgID, tmID, franchID, confID, divID, name, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+       NULL, NULL, NULL, NULL, NULL, NULL, NULL
+FROM Teams
+WHERE lgID = 'NHL' AND year = {LAST_YEAR}""" for y in NEXT_YEARS)
 
 conn.executescript(f"""
 DROP TABLE IF EXISTS team_stats;
 CREATE TEMP TABLE team_stats AS
 SELECT year, lgID, tmID, franchID, confID, divID, name, G, W, Pts, GF, GA, rank, playoff,
+       GF - GA AS goal_diff,
        Pts * 1.0 / (2 * G) AS pts_pct,
        GF * 1.0 / G AS gf_pg,
        GA * 1.0 / G AS ga_pg,
@@ -33,13 +41,19 @@ SELECT year, lgID, tmID, franchID, confID, divID, name, G, W, Pts, GF, GA, rank,
        PIM * 1.0 / G AS pim_pg,
        playoff IS NOT NULL AS made_playoffs
 FROM Teams
-
 UNION ALL
+{copies};
 
-SELECT {NEXT_YEAR}, lgID, tmID, franchID, confID, divID, name, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-       NULL, NULL, NULL, NULL, NULL, NULL, NULL
-FROM Teams
-WHERE lgID = 'NHL' AND year = {NEXT_YEAR - 1};
+-- seasons we have results for, and for every season the last one of those before it
+-- (2004 is missing, so for 2005 it is 2003; for 2012 it is 2009 if we have no 2010 and 2011 results)
+DROP TABLE IF EXISTS known_seasons;
+CREATE TEMP TABLE known_seasons AS
+SELECT DISTINCT year FROM team_stats WHERE Pts IS NOT NULL;
+
+DROP TABLE IF EXISTS prev_season;
+CREATE TEMP TABLE prev_season AS
+SELECT y.year, (SELECT MAX(k.year) FROM known_seasons k WHERE k.year < y.year) AS prev_year
+FROM (SELECT DISTINCT year FROM team_stats) y;
 """)
 
 
@@ -50,7 +64,7 @@ WHERE lgID = 'NHL' AND year = {NEXT_YEAR - 1};
 # including call-ups and trades. Bad teams use more players, so counting all
 # of them would leak how the season went. We only use the 18 best players
 # by last season's points (about one lineup).
-# 2004 is missing, so for 2005 the season before is 2003.
+# "Season before" = the last season we have results for (prev_season table).
 
 conn.executescript("""
 DROP TABLE IF EXISTS player_year;
@@ -61,9 +75,9 @@ GROUP BY playerID, year;
 
 DROP TABLE IF EXISTS roster;
 CREATE TEMP TABLE roster AS
-SELECT DISTINCT playerID, year, tmID,
-       CASE WHEN year = 2005 THEN 2003 ELSE year - 1 END AS prev_year
-FROM Scoring;
+SELECT DISTINCT s.playerID, s.year, s.tmID, p.prev_year
+FROM Scoring s
+JOIN prev_season p ON p.year = s.year;
 
 DROP TABLE IF EXISTS player_stats;
 CREATE TEMP TABLE player_stats AS
@@ -95,9 +109,9 @@ WITH goalie_year AS (
     GROUP BY playerID, year
 ),
 goalie_roster AS (
-    SELECT DISTINCT playerID, year, tmID,
-           CASE WHEN year = 2005 THEN 2003 ELSE year - 1 END AS prev_year
-    FROM Goalies
+    SELECT DISTINCT g.playerID, g.year, g.tmID, p.prev_year
+    FROM Goalies g
+    JOIN prev_season p ON p.year = g.year
 )
 SELECT r.year, r.tmID,
        1 - SUM(CASE WHEN last.SA > 0 THEN last.GA END) * 1.0
@@ -134,13 +148,15 @@ FROM stints st;
 
 
 # ---------- 4. put everything together, with last season's values ----------
-# LAG(x) = value of x in the previous season of the same franchise.
-# franchID stays the same when a team moves city. 2004 is missing, so 2005 looks at 2003.
-# (3 franchises stopped playing for 1-2 seasons; for them it is the last season they played.)
+# Teams are ranked with the information we have about them (teacher feedback):
+#   - division known: one ranking per division (inside its conference)
+#   - only the conference known: one ranking per conference
+#   - nothing known: one ranking of all the teams of the league
+# Each league (NHL, WHA, ...) is ranked on its own. Order: points, wins, goal difference.
 #
-# Teams are ranked inside a group: the conference (1974 on), or the division when
-# there were no conferences (1926-1937, 1967-1973), or the whole league.
-# Each league (NHL, WHA, ...) is ranked on its own.
+# "Last season" = the last season of the same franchise that we have results for
+# (franchID stays the same when a team moves city). 2004 is missing, so 2005 looks
+# at 2003, and a season like 2012 looks at 2009 if we don't have 2010 and 2011.
 
 query = f"""
 WITH seasons AS (
@@ -149,54 +165,71 @@ WITH seasons AS (
            g.goalie_save_pct, g.goalie_gaa,
            COALESCE(pw.playoff_wins, 0) AS playoff_wins,
            c.max_stint, c.first_coach, c.last_coach,
-           CASE WHEN t.Pts IS NOT NULL THEN
-               ROW_NUMBER() OVER (PARTITION BY t.year, t.lgID, COALESCE(t.confID, t.divID)
-                                  ORDER BY t.rank = 1 DESC, t.Pts DESC, t.W DESC, t.GF - t.GA DESC)
-           END AS group_rank,
-           COUNT(*) OVER (PARTITION BY t.year, t.lgID, COALESCE(t.confID, t.divID)) AS group_teams
+           CASE WHEN t.divID IS NOT NULL THEN COALESCE(t.confID, '') || '/' || t.divID
+                ELSE COALESCE(t.confID, '') END AS group_key
     FROM team_stats t
     LEFT JOIN player_stats p ON p.year = t.year AND p.tmID = t.tmID
     LEFT JOIN goalie_stats g ON g.year = t.year AND g.tmID = t.tmID
     LEFT JOIN playoff_wins pw ON pw.year = t.year AND pw.tmID = t.tmID
     LEFT JOIN coach_season c ON c.year = t.year AND c.tmID = t.tmID
 ),
-with_prev AS (
+ranked AS (
     SELECT *,
-        LAG(pts_pct)           OVER w AS prev_pts_pct,
-        LAG(pts_pct, 2)        OVER w AS prev2_pts_pct,
-        AVG(pts_pct)           OVER (w ROWS BETWEEN 3 PRECEDING AND 1 PRECEDING) AS avg3_pts_pct,
-        LAG((group_rank - 1.0) / (group_teams - 1)) OVER w AS prev_rank_norm,
-        LAG(gf_pg)             OVER w AS prev_gf_pg,
-        LAG(ga_pg)             OVER w AS prev_ga_pg,
-        LAG(pp_pct)            OVER w AS prev_pp_pct,
-        LAG(pk_pct)            OVER w AS prev_pk_pct,
-        LAG(pim_pg)            OVER w AS prev_pim_pg,
-        LAG(made_playoffs)     OVER w AS prev_made_playoffs,
-        LAG(playoff_wins)      OVER w AS prev_playoff_wins,
-        LAG(max_stint) OVER w > 1 AS prev_coach_changed,
-        LAG(last_coach)        OVER w AS prev_last_coach
+           CASE WHEN Pts IS NOT NULL THEN
+               ROW_NUMBER() OVER (PARTITION BY year, lgID, group_key ORDER BY Pts DESC, W DESC, goal_diff DESC)
+           END AS group_rank,
+           COUNT(*) OVER (PARTITION BY year, lgID, group_key) AS group_teams
     FROM seasons
+),
+-- only the seasons with results, with a few values of the season before them
+known AS (
+    SELECT *,
+           (group_rank - 1.0) / (group_teams - 1) AS rank_norm,
+           LAG(pts_pct) OVER w AS lag_pts_pct,
+           AVG(pts_pct) OVER (w ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS last3_pts_pct
+    FROM ranked
+    WHERE Pts IS NOT NULL
     WINDOW w AS (PARTITION BY franchID ORDER BY year)
+),
+with_prev AS (
+    SELECT s.*,
+           k.pts_pct AS prev_pts_pct,
+           k.last3_pts_pct AS avg3_pts_pct,
+           k.pts_pct - k.lag_pts_pct AS pts_pct_trend,
+           k.rank_norm AS prev_rank_norm,
+           k.gf_pg AS prev_gf_pg,
+           k.ga_pg AS prev_ga_pg,
+           k.pp_pct AS prev_pp_pct,
+           k.pk_pct AS prev_pk_pct,
+           k.pim_pg AS prev_pim_pg,
+           k.made_playoffs AS prev_made_playoffs,
+           k.playoff_wins AS prev_playoff_wins,
+           k.max_stint > 1 AS prev_coach_changed,
+           k.last_coach AS prev_last_coach
+    FROM ranked s
+    LEFT JOIN known k ON k.franchID = s.franchID
+        AND k.year = (SELECT MAX(k2.year) FROM known k2 WHERE k2.franchID = s.franchID AND k2.year < s.year)
 )
 SELECT
     year, lgID, franchID, tmID, name,
     -- full name from abbrev, or the value as it is if it is not there
     COALESCE(conf.Fullname, s.confID) AS conference,
     COALESCE(div.Fullname, s.divID) AS division,
-    -- the ranking depends on what we know about the teams: one ranking per
-    -- conference, or per division if there are no conferences, or one for all teams
-    COALESCE(conf.Fullname, s.confID, div.Fullname, s.divID,
-             lgID || ' (whole league)', 'All teams') AS ranking_group,
+    CASE WHEN s.divID IS NOT NULL AND s.confID IS NOT NULL
+             THEN COALESCE(conf.Fullname, s.confID) || ' - ' || COALESCE(div.Fullname, s.divID)
+         WHEN s.divID IS NOT NULL THEN COALESCE(div.Fullname, s.divID)
+         WHEN s.confID IS NOT NULL THEN COALESCE(conf.Fullname, s.confID)
+         ELSE lgID || ' (all teams)'
+    END AS ranking_group,
 
     -- targets
-    pts_pct,
+    pts_pct, W, goal_diff,
     group_rank,
     (group_rank - 1.0) / (group_teams - 1) AS rank_norm,  -- 0 = first, 1 = last
     max_stint > 1 AS coach_changed,
 
     -- team, last season
-    prev_pts_pct, avg3_pts_pct,
-    prev_pts_pct - prev2_pts_pct AS pts_pct_trend,
+    prev_pts_pct, avg3_pts_pct, pts_pct_trend,
     prev_rank_norm, prev_gf_pg, prev_ga_pg, prev_pp_pct, prev_pk_pct, prev_pim_pg,
     prev_made_playoffs, prev_playoff_wins,
 
@@ -223,7 +256,7 @@ ORDER BY year, lgID, ranking_group, group_rank
 
 df = pd.read_sql(query, conn)
 
-# If the coach of a season is not in the data (always for NEXT_YEAR, and a few
+# If the coach of a season is not in the data (always for NEXT_YEARS, and a few
 # old seasons), the coach columns would say 0 seasons, 0 awards, ... so we
 # leave them empty instead. When the teacher adds the coaches, they are used.
 no_coach = df["coach"].isna()
@@ -241,6 +274,8 @@ df = df.rename(columns={
     "name": "team",
     # targets
     "pts_pct": "points_%",
+    "W": "wins",
+    "goal_diff": "goal_difference",
     "group_rank": "rank_in_group",
     "rank_norm": "rank_0_to_1",
     "coach_changed": "coach_changed_in_season",
@@ -273,7 +308,7 @@ df = df.rename(columns={
 })
 
 # yes/no columns and counts as whole numbers (1 instead of 1.0), the rest with 3 decimals
-whole_numbers = ["rank_in_group", "coach_changed_in_season", "last_season_made_playoffs",
+whole_numbers = ["wins", "goal_difference", "rank_in_group", "coach_changed_in_season", "last_season_made_playoffs",
                  "last_season_playoff_wins", "players_last_season_points", "players_with_20_goals",
                  "players_awards", "coach_new_this_season", "last_season_coach_changed",
                  "coach_seasons_with_team", "coach_seasons_total", "coach_playoff_wins", "coach_awards"]
