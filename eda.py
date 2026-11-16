@@ -2,11 +2,14 @@
 # Run from the project folder: python eda.py
 # Prints the main numbers and saves the plots in outputs/.
 
+import os
+
 import matplotlib.pyplot as plt
 import pandas as pd
 
 from src.data import load_table
 
+os.makedirs("outputs", exist_ok=True)
 teams = load_table("Teams")
 coaches = load_table("Coaches")
 

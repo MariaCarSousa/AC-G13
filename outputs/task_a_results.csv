@@ -1,85 +1,547 @@
-test_season,model,rank_error_0_to_1,points_%_error,rank_correlation
+test_season,model,rank_error_0_to_1,points_%_mae,spearman
+1918,Baseline (last season),0.5,0.152,0.0
+1918,Ridge,0.5,0.178,-0.25
+1918,kNN,0.5,0.139,-0.25
+1918,Decision tree,0.5,0.144,0.0
+1918,Random forest,0.5,0.131,0.0
+1918,Gradient boosting,0.5,0.139,0.0
+1919,Baseline (last season),0.238,0.129,0.65
+1919,Ridge,0.333,0.133,0.55
+1919,kNN,0.381,0.104,0.15
+1919,Decision tree,0.429,0.14,0.05
+1919,Random forest,0.095,0.106,0.9
+1919,Gradient boosting,0.238,0.093,0.65
+1920,Baseline (last season),0.333,0.071,0.45
+1920,Ridge,0.429,0.401,0.05
+1920,kNN,0.476,0.083,-0.3
+1920,Decision tree,0.143,0.055,0.75
+1920,Random forest,0.238,0.078,0.65
+1920,Gradient boosting,0.0,0.065,1.0
+1921,Baseline (last season),0.273,0.076,0.567
+1921,Ridge,0.333,0.097,0.367
+1921,kNN,0.273,0.09,0.5
+1921,Decision tree,0.364,0.122,0.067
+1921,Random forest,0.121,0.089,0.867
+1921,Gradient boosting,0.121,0.096,0.867
+1922,Baseline (last season),0.303,0.058,0.367
+1922,Ridge,0.242,0.104,0.6
+1922,kNN,0.424,0.1,0.033
+1922,Decision tree,0.424,0.118,0.1
+1922,Random forest,0.424,0.083,0.033
+1922,Gradient boosting,0.243,0.084,0.467
+1923,Baseline (last season),0.364,0.131,0.033
+1923,Ridge,0.333,0.101,0.5
+1923,kNN,0.485,0.098,-0.167
+1923,Decision tree,0.364,0.081,0.033
+1923,Random forest,0.394,0.086,0.3
+1923,Gradient boosting,0.303,0.082,0.467
+1924,Baseline (last season),0.433,0.146,-0.171
+1924,Ridge,0.4,0.108,0.057
+1924,kNN,0.367,0.123,0.0
+1924,Decision tree,0.333,0.129,0.286
+1924,Random forest,0.333,0.119,0.171
+1924,Gradient boosting,0.433,0.11,-0.286
+1925,Baseline (last season),0.462,0.168,-0.196
+1925,Ridge,0.333,0.13,0.257
+1925,kNN,0.415,0.12,0.061
+1925,Decision tree,0.385,0.12,0.089
+1925,Random forest,0.446,0.126,-0.043
+1925,Gradient boosting,0.421,0.137,0.029
+1926,Baseline (last season),0.35,0.105,0.05
+1926,Ridge,0.4,0.111,0.2
+1926,kNN,0.3,0.106,0.35
+1926,Decision tree,0.35,0.095,0.15
+1926,Random forest,0.4,0.109,-0.2
+1926,Gradient boosting,0.35,0.11,0.15
+1927,Baseline (last season),0.3,0.125,0.6
+1927,Ridge,0.4,0.104,0.05
+1927,kNN,0.45,0.103,-0.2
+1927,Decision tree,0.15,0.084,0.85
+1927,Random forest,0.35,0.103,0.35
+1927,Gradient boosting,0.3,0.112,0.5
+1928,Baseline (last season),0.25,0.1,0.45
+1928,Ridge,0.4,0.135,-0.05
+1928,kNN,0.5,0.117,-0.25
+1928,Decision tree,0.35,0.118,0.15
+1928,Random forest,0.5,0.119,-0.45
+1928,Gradient boosting,0.45,0.124,-0.35
+1929,Baseline (last season),0.4,0.15,0.0
+1929,Ridge,0.3,0.111,0.45
+1929,kNN,0.25,0.111,0.6
+1929,Decision tree,0.5,0.15,-0.25
+1929,Random forest,0.4,0.126,0.1
+1929,Gradient boosting,0.45,0.146,-0.05
+1930,Baseline (last season),0.15,0.107,0.75
+1930,Ridge,0.15,0.098,0.75
+1930,kNN,0.15,0.119,0.75
+1930,Decision tree,0.35,0.128,0.2
+1930,Random forest,0.2,0.105,0.75
+1930,Gradient boosting,0.25,0.116,0.6
+1931,Baseline (last season),0.25,0.09,0.3
+1931,Ridge,0.25,0.088,0.3
+1931,kNN,0.417,0.046,0.1
+1931,Decision tree,0.333,0.07,0.2
+1931,Random forest,0.417,0.062,0.1
+1931,Gradient boosting,0.417,0.062,-0.2
+1932,Baseline (last season),0.407,0.069,-0.05
+1932,Ridge,0.333,0.126,0.35
+1932,kNN,0.389,0.072,0.25
+1932,Decision tree,0.407,0.087,0.05
+1932,Random forest,0.333,0.061,0.3
+1932,Gradient boosting,0.333,0.08,0.3
+1933,Baseline (last season),0.278,0.053,0.25
+1933,Ridge,0.259,0.065,0.45
+1933,kNN,0.352,0.064,-0.05
+1933,Decision tree,0.352,0.07,0.05
+1933,Random forest,0.185,0.063,0.75
+1933,Gradient boosting,0.278,0.086,0.35
+1934,Baseline (last season),0.278,0.07,0.05
+1934,Ridge,0.407,0.103,-0.05
+1934,kNN,0.352,0.089,-0.05
+1934,Decision tree,0.278,0.09,0.25
+1934,Random forest,0.407,0.094,-0.1
+1934,Gradient boosting,0.352,0.092,-0.05
+1935,Baseline (last season),0.417,0.073,0.2
+1935,Ridge,0.25,0.074,0.6
+1935,kNN,0.417,0.039,0.1
+1935,Decision tree,0.333,0.06,0.5
+1935,Random forest,0.25,0.042,0.7
+1935,Gradient boosting,0.083,0.047,0.9
+1936,Baseline (last season),0.333,0.07,0.3
+1936,Ridge,0.334,0.091,0.2
+1936,kNN,0.334,0.076,0.2
+1936,Decision tree,0.5,0.092,-0.2
+1936,Random forest,0.5,0.085,-0.4
+1936,Gradient boosting,0.5,0.093,-0.4
+1937,Baseline (last season),0.583,0.135,-0.4
+1937,Ridge,0.417,0.119,0.1
+1937,kNN,0.417,0.093,0.2
+1937,Decision tree,0.5,0.132,-0.1
+1937,Random forest,0.417,0.118,-0.1
+1937,Gradient boosting,0.333,0.106,0.2
+1938,Baseline (last season),0.143,0.068,0.821
+1938,Ridge,0.238,0.073,0.679
+1938,kNN,0.19,0.102,0.75
+1938,Decision tree,0.095,0.098,0.893
+1938,Random forest,0.095,0.086,0.929
+1938,Gradient boosting,0.19,0.1,0.679
+1939,Baseline (last season),0.143,0.104,0.75
+1939,Ridge,0.048,0.07,0.964
+1939,kNN,0.286,0.128,0.571
+1939,Decision tree,0.333,0.15,0.357
+1939,Random forest,0.238,0.119,0.679
+1939,Gradient boosting,0.286,0.125,0.5
+1940,Baseline (last season),0.191,0.101,0.786
+1940,Ridge,0.19,0.088,0.786
+1940,kNN,0.095,0.08,0.893
+1940,Decision tree,0.191,0.077,0.786
+1940,Random forest,0.191,0.079,0.786
+1940,Gradient boosting,0.143,0.072,0.857
+1941,Baseline (last season),0.191,0.08,0.679
+1941,Ridge,0.191,0.073,0.714
+1941,kNN,0.19,0.052,0.786
+1941,Decision tree,0.286,0.101,0.5
+1941,Random forest,0.095,0.044,0.929
+1941,Gradient boosting,0.143,0.036,0.857
+1942,Baseline (last season),0.467,0.111,-0.371
+1942,Ridge,0.333,0.099,0.371
+1942,kNN,0.4,0.085,-0.086
+1942,Decision tree,0.4,0.127,0.029
+1942,Random forest,0.467,0.107,-0.543
+1942,Gradient boosting,0.4,0.121,-0.257
+1943,Baseline (last season),0.267,0.11,0.429
+1943,Ridge,0.333,0.197,0.086
+1943,kNN,0.267,0.136,0.6
+1943,Decision tree,0.2,0.13,0.6
+1943,Random forest,0.333,0.134,-0.029
+1943,Gradient boosting,0.467,0.15,-0.257
+1944,Baseline (last season),0.067,0.087,0.943
+1944,Ridge,0.0,0.102,1.0
+1944,kNN,0.067,0.131,0.943
+1944,Decision tree,0.333,0.211,0.257
+1944,Random forest,0.133,0.136,0.829
+1944,Gradient boosting,0.2,0.1,0.771
+1945,Baseline (last season),0.267,0.143,0.543
+1945,Ridge,0.267,0.088,0.543
+1945,kNN,0.333,0.077,0.371
+1945,Decision tree,0.467,0.121,-0.314
+1945,Random forest,0.4,0.086,0.143
+1945,Gradient boosting,0.4,0.118,0.143
+1946,Baseline (last season),0.267,0.086,0.429
+1946,Ridge,0.4,0.092,-0.086
+1946,kNN,0.333,0.088,0.314
+1946,Decision tree,0.267,0.097,0.486
+1946,Random forest,0.4,0.102,0.2
+1946,Gradient boosting,0.267,0.086,0.486
+1947,Baseline (last season),0.267,0.086,0.371
+1947,Ridge,0.2,0.074,0.714
+1947,kNN,0.333,0.077,0.257
+1947,Decision tree,0.267,0.079,0.371
+1947,Random forest,0.333,0.083,0.314
+1947,Gradient boosting,0.333,0.072,0.314
+1948,Baseline (last season),0.333,0.078,0.429
+1948,Ridge,0.333,0.084,0.429
+1948,kNN,0.267,0.065,0.6
+1948,Decision tree,0.2,0.072,0.657
+1948,Random forest,0.267,0.052,0.6
+1948,Gradient boosting,0.333,0.077,0.429
+1949,Baseline (last season),0.267,0.051,0.543
+1949,Ridge,0.2,0.068,0.486
+1949,kNN,0.133,0.046,0.829
+1949,Decision tree,0.0,0.04,1.0
+1949,Random forest,0.2,0.045,0.771
+1949,Gradient boosting,0.333,0.07,0.486
+1950,Baseline (last season),0.133,0.086,0.886
+1950,Ridge,0.467,0.178,-0.143
+1950,kNN,0.267,0.126,0.6
+1950,Decision tree,0.2,0.116,0.771
+1950,Random forest,0.067,0.116,0.943
+1950,Gradient boosting,0.133,0.112,0.771
+1951,Baseline (last season),0.067,0.057,0.943
+1951,Ridge,0.067,0.063,0.943
+1951,kNN,0.133,0.072,0.771
+1951,Decision tree,0.067,0.103,0.943
+1951,Random forest,0.133,0.061,0.886
+1951,Gradient boosting,0.2,0.063,0.771
+1952,Baseline (last season),0.2,0.069,0.714
+1952,Ridge,0.2,0.059,0.714
+1952,kNN,0.133,0.052,0.829
+1952,Decision tree,0.2,0.063,0.714
+1952,Random forest,0.2,0.055,0.714
+1952,Gradient boosting,0.2,0.087,0.714
+1953,Baseline (last season),0.2,0.095,0.714
+1953,Ridge,0.0,0.064,1.0
+1953,kNN,0.2,0.09,0.714
+1953,Decision tree,0.2,0.12,0.771
+1953,Random forest,0.067,0.079,0.943
+1953,Gradient boosting,0.0,0.075,1.0
+1954,Baseline (last season),0.0,0.074,1.0
+1954,Ridge,0.333,0.101,0.371
+1954,kNN,0.0,0.08,1.0
+1954,Decision tree,0.2,0.072,0.657
+1954,Random forest,0.0,0.072,1.0
+1954,Gradient boosting,0.133,0.073,0.886
+1955,Baseline (last season),0.2,0.086,0.771
+1955,Ridge,0.2,0.098,0.829
+1955,kNN,0.133,0.072,0.886
+1955,Decision tree,0.2,0.092,0.6
+1955,Random forest,0.2,0.081,0.6
+1955,Gradient boosting,0.133,0.039,0.829
+1956,Baseline (last season),0.2,0.079,0.771
+1956,Ridge,0.2,0.071,0.714
+1956,kNN,0.2,0.068,0.771
+1956,Decision tree,0.2,0.062,0.771
+1956,Random forest,0.2,0.06,0.771
+1956,Gradient boosting,0.267,0.081,0.657
+1957,Baseline (last season),0.267,0.079,0.657
+1957,Ridge,0.333,0.084,0.429
+1957,kNN,0.2,0.06,0.771
+1957,Decision tree,0.267,0.088,0.486
+1957,Random forest,0.267,0.069,0.543
+1957,Gradient boosting,0.333,0.075,0.429
+1958,Baseline (last season),0.4,0.071,0.143
+1958,Ridge,0.4,0.08,0.086
+1958,kNN,0.267,0.046,0.486
+1958,Decision tree,0.4,0.069,-0.029
+1958,Random forest,0.4,0.074,0.029
+1958,Gradient boosting,0.4,0.068,0.086
+1959,Baseline (last season),0.267,0.057,0.486
+1959,Ridge,0.4,0.087,0.086
+1959,kNN,0.2,0.054,0.6
+1959,Decision tree,0.333,0.081,0.143
+1959,Random forest,0.4,0.056,-0.029
+1959,Gradient boosting,0.4,0.082,-0.029
+1960,Baseline (last season),0.067,0.053,0.943
+1960,Ridge,0.333,0.084,0.371
+1960,kNN,0.2,0.085,0.714
+1960,Decision tree,0.067,0.101,0.943
+1960,Random forest,0.133,0.075,0.886
+1960,Gradient boosting,0.133,0.085,0.886
+1961,Baseline (last season),0.067,0.038,0.943
+1961,Ridge,0.267,0.103,0.6
+1961,kNN,0.133,0.072,0.829
+1961,Decision tree,0.4,0.152,-0.257
+1961,Random forest,0.2,0.084,0.657
+1961,Gradient boosting,0.2,0.086,0.771
+1962,Baseline (last season),0.2,0.071,0.771
+1962,Ridge,0.2,0.072,0.771
+1962,kNN,0.2,0.061,0.771
+1962,Decision tree,0.2,0.064,0.771
+1962,Random forest,0.2,0.064,0.771
+1962,Gradient boosting,0.133,0.06,0.886
+1963,Baseline (last season),0.133,0.029,0.771
+1963,Ridge,0.267,0.062,0.486
+1963,kNN,0.133,0.056,0.829
+1963,Decision tree,0.267,0.077,0.543
+1963,Random forest,0.133,0.039,0.771
+1963,Gradient boosting,0.2,0.036,0.6
+1964,Baseline (last season),0.2,0.038,0.657
+1964,Ridge,0.267,0.055,0.486
+1964,kNN,0.333,0.068,0.371
+1964,Decision tree,0.2,0.058,0.6
+1964,Random forest,0.267,0.062,0.543
+1964,Gradient boosting,0.267,0.062,0.486
+1965,Baseline (last season),0.267,0.042,0.6
+1965,Ridge,0.2,0.056,0.771
+1965,kNN,0.2,0.059,0.714
+1965,Decision tree,0.2,0.054,0.771
+1965,Random forest,0.2,0.029,0.771
+1965,Gradient boosting,0.067,0.032,0.943
+1966,Baseline (last season),0.2,0.088,0.771
+1966,Ridge,0.2,0.088,0.771
+1966,kNN,0.2,0.08,0.771
+1966,Decision tree,0.133,0.082,0.886
+1966,Random forest,0.2,0.089,0.771
+1966,Gradient boosting,0.133,0.081,0.886
+1967,Baseline (last season),0.4,0.077,0.143
+1967,Ridge,0.167,0.091,0.743
+1967,kNN,0.433,0.061,-0.029
+1967,Decision tree,0.533,0.104,-0.514
+1967,Random forest,0.333,0.075,0.143
+1967,Gradient boosting,0.333,0.065,0.2
+1968,Baseline (last season),0.3,0.081,0.429
+1968,Ridge,0.367,0.099,0.143
+1968,kNN,0.3,0.087,0.343
+1968,Decision tree,0.233,0.086,0.514
+1968,Random forest,0.3,0.082,0.429
+1968,Gradient boosting,0.4,0.083,0.086
+1969,Baseline (last season),0.433,0.068,-0.171
+1969,Ridge,0.3,0.064,0.057
+1969,kNN,0.333,0.069,0.229
+1969,Decision tree,0.467,0.098,-0.286
+1969,Random forest,0.467,0.062,-0.2
+1969,Gradient boosting,0.4,0.061,-0.086
+1970,Baseline (last season),0.238,0.091,0.429
+1970,Ridge,0.19,0.082,0.607
+1970,kNN,0.214,0.083,0.643
+1970,Decision tree,0.238,0.107,0.446
+1970,Random forest,0.119,0.078,0.839
+1970,Gradient boosting,0.167,0.069,0.661
+1971,Baseline (last season),0.143,0.06,0.839
+1971,Ridge,0.167,0.075,0.821
+1971,kNN,0.143,0.082,0.839
+1971,Decision tree,0.167,0.065,0.821
+1971,Random forest,0.119,0.071,0.857
+1971,Gradient boosting,0.238,0.079,0.536
+1972,Baseline (last season),0.29,0.078,0.33
+1972,Ridge,0.29,0.082,0.432
+1972,kNN,0.298,0.086,0.242
+1972,Decision tree,0.251,0.091,0.598
+1972,Random forest,0.257,0.081,0.457
+1972,Gradient boosting,0.227,0.083,0.45
+1973,Baseline (last season),0.241,0.087,0.562
+1973,Ridge,0.253,0.082,0.445
+1973,kNN,0.245,0.081,0.529
+1973,Decision tree,0.241,0.094,0.544
+1973,Random forest,0.308,0.082,0.269
+1973,Gradient boosting,0.253,0.086,0.385
+1974,Baseline (last season),0.258,0.106,0.533
+1974,Ridge,0.292,0.109,0.437
+1974,kNN,0.234,0.1,0.61
+1974,Decision tree,0.388,0.137,0.043
+1974,Random forest,0.24,0.103,0.61
+1974,Gradient boosting,0.323,0.111,0.32
+1975,Baseline (last season),0.271,0.074,0.317
+1975,Ridge,0.172,0.062,0.383
+1975,kNN,0.229,0.077,0.473
+1975,Decision tree,0.273,0.089,0.35
+1975,Random forest,0.206,0.067,0.56
+1975,Gradient boosting,0.174,0.073,0.66
+1976,Baseline (last season),0.19,0.057,0.614
+1976,Ridge,0.175,0.059,0.671
+1976,kNN,0.24,0.058,0.57
+1976,Decision tree,0.188,0.061,0.642
+1976,Random forest,0.21,0.051,0.605
+1976,Gradient boosting,0.193,0.055,0.621
+1977,Baseline (last season),0.279,0.08,0.422
+1977,Ridge,0.209,0.085,0.509
+1977,kNN,0.188,0.08,0.637
+1977,Decision tree,0.211,0.069,0.697
+1977,Random forest,0.209,0.071,0.579
+1977,Gradient boosting,0.168,0.068,0.767
+1978,Baseline (last season),0.16,0.096,0.744
+1978,Ridge,0.142,0.097,0.797
+1978,kNN,0.112,0.092,0.839
+1978,Decision tree,0.194,0.089,0.692
+1978,Random forest,0.131,0.086,0.849
+1978,Gradient boosting,0.167,0.084,0.795
+1979,Baseline (last season),0.241,0.09,0.514
+1979,Ridge,0.34,0.098,0.129
+1979,kNN,0.317,0.088,0.306
+1979,Decision tree,0.272,0.087,0.376
+1979,Random forest,0.239,0.077,0.452
+1979,Gradient boosting,0.218,0.077,0.608
+1980,Baseline (last season),0.171,0.07,0.767
+1980,Ridge,0.2,0.067,0.571
+1980,kNN,0.154,0.06,0.723
+1980,Decision tree,0.14,0.068,0.797
+1980,Random forest,0.197,0.069,0.652
+1980,Gradient boosting,0.211,0.074,0.635
+1981,Baseline (last season),0.214,0.083,0.544
+1981,Ridge,0.276,0.093,0.385
+1981,kNN,0.236,0.078,0.55
+1981,Decision tree,0.249,0.086,0.459
+1981,Random forest,0.295,0.087,0.374
+1981,Gradient boosting,0.283,0.095,0.317
+1982,Baseline (last season),0.188,0.07,0.736
+1982,Ridge,0.209,0.074,0.683
+1982,kNN,0.187,0.074,0.747
+1982,Decision tree,0.217,0.089,0.632
+1982,Random forest,0.22,0.074,0.63
+1982,Gradient boosting,0.161,0.077,0.823
+1983,Baseline (last season),0.201,0.067,0.664
+1983,Ridge,0.164,0.061,0.714
+1983,kNN,0.152,0.068,0.739
+1983,Decision tree,0.213,0.072,0.688
+1983,Random forest,0.182,0.069,0.718
+1983,Gradient boosting,0.174,0.062,0.708
+1984,Baseline (last season),0.271,0.091,0.405
+1984,Ridge,0.241,0.075,0.498
+1984,kNN,0.258,0.079,0.438
+1984,Decision tree,0.261,0.066,0.455
+1984,Random forest,0.229,0.068,0.567
+1984,Gradient boosting,0.207,0.069,0.636
+1985,Baseline (last season),0.194,0.071,0.72
+1985,Ridge,0.133,0.053,0.838
+1985,kNN,0.21,0.071,0.635
+1985,Decision tree,0.223,0.099,0.558
+1985,Random forest,0.214,0.079,0.529
+1985,Gradient boosting,0.171,0.074,0.676
+1986,Baseline (last season),0.252,0.076,0.495
+1986,Ridge,0.22,0.057,0.485
+1986,kNN,0.239,0.054,0.458
+1986,Decision tree,0.232,0.066,0.558
+1986,Random forest,0.282,0.053,0.395
+1986,Gradient boosting,0.31,0.057,0.279
+1987,Baseline (last season),0.226,0.063,0.574
+1987,Ridge,0.261,0.074,0.479
+1987,kNN,0.28,0.073,0.432
+1987,Decision tree,0.296,0.084,0.267
+1987,Random forest,0.325,0.075,0.314
+1987,Gradient boosting,0.317,0.077,0.33
+1988,Baseline (last season),0.219,0.064,0.541
+1988,Ridge,0.277,0.065,0.483
+1988,kNN,0.22,0.062,0.626
+1988,Decision tree,0.238,0.079,0.518
+1988,Random forest,0.229,0.063,0.583
+1988,Gradient boosting,0.17,0.055,0.727
+1989,Baseline (last season),0.322,0.086,0.232
+1989,Ridge,0.35,0.081,0.224
+1989,kNN,0.34,0.07,0.223
+1989,Decision tree,0.245,0.068,0.385
+1989,Random forest,0.321,0.067,0.214
+1989,Gradient boosting,0.349,0.076,0.141
+1990,Baseline (last season),0.262,0.068,0.464
+1990,Ridge,0.208,0.058,0.626
+1990,kNN,0.303,0.072,0.274
+1990,Decision tree,0.191,0.062,0.686
+1990,Random forest,0.232,0.054,0.527
+1990,Gradient boosting,0.26,0.058,0.471
+1991,Baseline (last season),0.264,0.09,0.482
+1991,Ridge,0.318,0.08,0.291
+1991,kNN,0.3,0.07,0.323
+1991,Decision tree,0.318,0.103,0.173
+1991,Random forest,0.291,0.077,0.364
+1991,Gradient boosting,0.291,0.082,0.318
+1992,Baseline (last season),0.265,0.095,0.378
+1992,Ridge,0.235,0.098,0.469
+1992,kNN,0.273,0.096,0.406
+1992,Decision tree,0.212,0.083,0.528
+1992,Random forest,0.197,0.087,0.524
+1992,Gradient boosting,0.197,0.077,0.535
+1993,Baseline (last season),0.228,0.083,0.499
+1993,Ridge,0.229,0.065,0.579
+1993,kNN,0.222,0.063,0.588
+1993,Decision tree,0.177,0.071,0.669
+1993,Random forest,0.229,0.064,0.568
+1993,Gradient boosting,0.239,0.071,0.523
+1994,Baseline (last season),0.199,0.07,0.596
+1994,Ridge,0.213,0.064,0.585
+1994,kNN,0.209,0.074,0.59
+1994,Decision tree,0.192,0.07,0.604
+1994,Random forest,0.177,0.063,0.674
+1994,Gradient boosting,0.216,0.073,0.582
 1995,Baseline (last season),0.186,0.057,0.736
-1995,Ridge,0.173,0.07,0.736
-1995,kNN,0.154,0.073,0.775
-1995,Decision tree,0.205,0.11,0.571
-1995,Random forest,0.224,0.09,0.624
-1995,Gradient boosting,0.192,0.096,0.648
+1995,Ridge,0.186,0.066,0.717
+1995,kNN,0.128,0.069,0.816
+1995,Decision tree,0.205,0.111,0.571
+1995,Random forest,0.218,0.088,0.648
+1995,Gradient boosting,0.231,0.089,0.558
 1996,Baseline (last season),0.282,0.082,0.316
-1996,Ridge,0.269,0.061,0.459
-1996,kNN,0.282,0.059,0.286
-1996,Decision tree,0.276,0.078,0.305
-1996,Random forest,0.269,0.063,0.327
-1996,Gradient boosting,0.308,0.067,0.258
+1996,Ridge,0.263,0.063,0.451
+1996,kNN,0.282,0.061,0.299
+1996,Decision tree,0.276,0.076,0.305
+1996,Random forest,0.269,0.064,0.324
+1996,Gradient boosting,0.314,0.073,0.231
 1997,Baseline (last season),0.237,0.069,0.44
-1997,Ridge,0.308,0.076,0.264
-1997,kNN,0.301,0.072,0.346
+1997,Ridge,0.289,0.076,0.302
+1997,kNN,0.308,0.071,0.33
 1997,Decision tree,0.231,0.062,0.538
-1997,Random forest,0.244,0.072,0.478
-1997,Gradient boosting,0.269,0.074,0.415
+1997,Random forest,0.244,0.072,0.486
+1997,Gradient boosting,0.269,0.075,0.363
 1998,Baseline (last season),0.223,0.059,0.525
-1998,Ridge,0.269,0.066,0.369
-1998,kNN,0.298,0.07,0.269
+1998,Ridge,0.269,0.065,0.392
+1998,kNN,0.256,0.068,0.353
 1998,Decision tree,0.282,0.078,0.369
-1998,Random forest,0.274,0.066,0.393
-1998,Gradient boosting,0.282,0.073,0.407
+1998,Random forest,0.274,0.066,0.391
+1998,Gradient boosting,0.276,0.072,0.404
 1999,Baseline (last season),0.216,0.068,0.605
-1999,Ridge,0.175,0.06,0.733
-1999,kNN,0.184,0.068,0.656
-1999,Decision tree,0.23,0.074,0.598
-1999,Random forest,0.2,0.055,0.64
-1999,Gradient boosting,0.216,0.061,0.62
+1999,Ridge,0.161,0.061,0.756
+1999,kNN,0.184,0.069,0.651
+1999,Decision tree,0.205,0.065,0.673
+1999,Random forest,0.195,0.055,0.651
+1999,Gradient boosting,0.21,0.059,0.612
 2000,Baseline (last season),0.176,0.058,0.775
-2000,Ridge,0.191,0.066,0.646
-2000,kNN,0.119,0.059,0.875
-2000,Decision tree,0.205,0.072,0.677
-2000,Random forest,0.133,0.058,0.839
-2000,Gradient boosting,0.152,0.07,0.793
+2000,Ridge,0.172,0.064,0.709
+2000,kNN,0.119,0.059,0.884
+2000,Decision tree,0.157,0.062,0.773
+2000,Random forest,0.138,0.058,0.838
+2000,Gradient boosting,0.124,0.066,0.864
 2001,Baseline (last season),0.238,0.067,0.529
-2001,Ridge,0.186,0.052,0.679
-2001,kNN,0.229,0.061,0.57
-2001,Decision tree,0.229,0.061,0.534
-2001,Random forest,0.21,0.059,0.618
-2001,Gradient boosting,0.233,0.065,0.575
+2001,Ridge,0.162,0.051,0.72
+2001,kNN,0.238,0.062,0.525
+2001,Decision tree,0.252,0.066,0.454
+2001,Random forest,0.205,0.058,0.634
+2001,Gradient boosting,0.238,0.063,0.552
 2002,Baseline (last season),0.272,0.077,0.346
-2002,Ridge,0.238,0.057,0.534
-2002,kNN,0.272,0.071,0.329
+2002,Ridge,0.219,0.056,0.575
+2002,kNN,0.262,0.069,0.341
 2002,Decision tree,0.248,0.07,0.477
-2002,Random forest,0.238,0.059,0.454
-2002,Gradient boosting,0.243,0.061,0.466
+2002,Random forest,0.248,0.059,0.427
+2002,Gradient boosting,0.257,0.062,0.395
 2003,Baseline (last season),0.224,0.069,0.557
-2003,Ridge,0.219,0.062,0.577
-2003,kNN,0.238,0.064,0.425
+2003,Ridge,0.219,0.061,0.604
+2003,kNN,0.238,0.066,0.427
 2003,Decision tree,0.205,0.05,0.63
-2003,Random forest,0.233,0.056,0.473
-2003,Gradient boosting,0.243,0.06,0.484
+2003,Random forest,0.238,0.056,0.471
+2003,Gradient boosting,0.252,0.06,0.4
 2005,Baseline (last season),0.238,0.078,0.482
-2005,Ridge,0.243,0.069,0.489
-2005,kNN,0.21,0.071,0.598
+2005,Ridge,0.243,0.068,0.491
+2005,kNN,0.21,0.07,0.604
 2005,Decision tree,0.21,0.081,0.571
-2005,Random forest,0.219,0.074,0.543
-2005,Gradient boosting,0.243,0.079,0.489
+2005,Random forest,0.224,0.074,0.539
+2005,Gradient boosting,0.233,0.079,0.523
 2006,Baseline (last season),0.229,0.069,0.511
-2006,Ridge,0.243,0.07,0.42
-2006,kNN,0.243,0.072,0.496
+2006,Ridge,0.252,0.072,0.393
+2006,kNN,0.248,0.076,0.473
 2006,Decision tree,0.271,0.094,0.366
-2006,Random forest,0.262,0.072,0.411
-2006,Gradient boosting,0.257,0.072,0.393
+2006,Random forest,0.262,0.071,0.414
+2006,Gradient boosting,0.248,0.073,0.441
 2007,Baseline (last season),0.295,0.069,0.275
-2007,Ridge,0.286,0.057,0.312
-2007,kNN,0.271,0.048,0.305
+2007,Ridge,0.257,0.055,0.348
+2007,kNN,0.267,0.049,0.334
 2007,Decision tree,0.276,0.06,0.388
-2007,Random forest,0.3,0.052,0.3
-2007,Gradient boosting,0.276,0.05,0.432
+2007,Random forest,0.31,0.052,0.225
+2007,Gradient boosting,0.262,0.049,0.445
 2008,Baseline (last season),0.229,0.053,0.529
-2008,Ridge,0.338,0.069,0.002
-2008,kNN,0.348,0.071,0.077
-2008,Decision tree,0.271,0.075,0.387
-2008,Random forest,0.286,0.06,0.341
-2008,Gradient boosting,0.262,0.062,0.405
+2008,Ridge,0.324,0.07,0.079
+2008,kNN,0.352,0.07,0.037
+2008,Decision tree,0.262,0.075,0.421
+2008,Random forest,0.286,0.06,0.37
+2008,Gradient boosting,0.257,0.061,0.448
 2009,Baseline (last season),0.252,0.068,0.493
-2009,Ridge,0.248,0.061,0.45
-2009,kNN,0.219,0.054,0.55
-2009,Decision tree,0.229,0.067,0.511
-2009,Random forest,0.243,0.062,0.516
-2009,Gradient boosting,0.233,0.059,0.52
+2009,Ridge,0.243,0.063,0.42
+2009,kNN,0.243,0.055,0.488
+2009,Decision tree,0.271,0.077,0.418
+2009,Random forest,0.238,0.063,0.511
+2009,Gradient boosting,0.252,0.062,0.48

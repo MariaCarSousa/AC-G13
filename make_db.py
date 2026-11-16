@@ -1,12 +1,14 @@
 # Puts all the CSV files in one SQLite database (outputs/hockey.db).
 # Run from the project folder: python make_db.py
 
+import os
 import sqlite3
 
 from src.data import DATA_DIR, load_table
 
 DB_PATH = "outputs/hockey.db"
 
+os.makedirs("outputs", exist_ok=True)
 conn = sqlite3.connect(DB_PATH)
 
 for csv_file in sorted(DATA_DIR.glob("*.csv")):
