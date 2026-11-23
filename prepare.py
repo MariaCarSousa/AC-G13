@@ -23,7 +23,7 @@ NEXT_YEARS = range(LAST_YEAR + 1, LAST_YEAR + 5)
 # ---------- 1. team stats of each season ----------
 
 copies = "\nUNION ALL\n".join(f"""
-SELECT {y}, lgID, tmID, franchID, confID, divID, name, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+SELECT {y}, lgID, tmID, franchID, confID, divID, name, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
        NULL, NULL, NULL, NULL, NULL, NULL, NULL
 FROM Teams
 WHERE lgID = 'NHL' AND year = {LAST_YEAR}""" for y in NEXT_YEARS)
@@ -31,7 +31,7 @@ WHERE lgID = 'NHL' AND year = {LAST_YEAR}""" for y in NEXT_YEARS)
 conn.executescript(f"""
 DROP TABLE IF EXISTS team_stats;
 CREATE TEMP TABLE team_stats AS
-SELECT year, lgID, tmID, franchID, confID, divID, name, G, W, Pts, GF, GA, rank, playoff,
+SELECT year, lgID, tmID, franchID, confID, divID, name, G, W, Pts, GF, GA, rank, playoff, PIM,
        GF - GA AS goal_diff,
        Pts * 1.0 / (2 * G) AS pts_pct,
        GF * 1.0 / G AS gf_pg,
@@ -57,6 +57,27 @@ FROM (SELECT DISTINCT year FROM team_stats) y;
 """)
 
 
+# ---------- 2a. height and weight of every player, with the missing ones filled ----------
+# About 3% of the players have no height and weight (always both missing, all of them
+# played before 1980). data_quality.py compares ways to fill them by hiding known values:
+# the median of the players of the same decade (first season) and position is the best.
+# This only uses the players' own data (not any target), so it does not leak results.
+
+size = pd.read_sql("""
+    SELECT m.playerID, m.pos, m.height, m.weight, MIN(s.year) AS first_season
+    FROM Master m JOIN Scoring s ON s.playerID = m.playerID
+    GROUP BY m.playerID
+""", conn)
+size["decade"] = size["first_season"] // 10 * 10
+size["pos_group"] = size["pos"].str[0].map({"D": "defense", "G": "goalie"}).fillna("forward")
+size.loc[size["pos"].isna(), "pos_group"] = "unknown"
+for col in ["height", "weight"]:
+    by_group = size.groupby(["decade", "pos_group"])[col].transform("median")
+    by_decade = size.groupby("decade")[col].transform("median")
+    size[col] = size[col].fillna(by_group).fillna(by_decade).fillna(size[col].median())
+size[["playerID", "height", "weight"]].to_sql("player_size", conn, if_exists="replace", index=False)
+
+
 # ---------- 2. players of each season and their history ----------
 # Players of the team this season (known before the season starts),
 # with their own stats from the season before, on any team.
@@ -69,7 +90,7 @@ FROM (SELECT DISTINCT year FROM team_stats) y;
 conn.executescript("""
 DROP TABLE IF EXISTS player_year;
 CREATE TEMP TABLE player_year AS
-SELECT playerID, year, SUM(GP) AS GP, SUM(G) AS G, SUM(Pts) AS Pts
+SELECT playerID, year, SUM(GP) AS GP, SUM(G) AS G, SUM(Pts) AS Pts, SUM(PIM) AS PIM
 FROM Scoring
 GROUP BY playerID, year;
 
@@ -84,19 +105,24 @@ CREATE TEMP TABLE player_stats AS
 WITH players AS (
     SELECT r.year, r.tmID, r.playerID,
            r.year - m.birthYear AS age,
-           last.GP AS last_GP, last.G AS last_G, last.Pts AS last_Pts,
+           ps.height, ps.weight,
+           last.GP AS last_GP, last.G AS last_G, last.Pts AS last_Pts, last.PIM AS last_PIM,
            ROW_NUMBER() OVER (PARTITION BY r.year, r.tmID ORDER BY last.Pts DESC) AS pts_order,
            (SELECT COUNT(*) FROM AwardsPlayers a WHERE a.playerID = r.playerID AND a.year < r.year) AS awards
     FROM roster r
     LEFT JOIN Master m ON m.playerID = r.playerID
+    LEFT JOIN player_size ps ON ps.playerID = r.playerID
     LEFT JOIN player_year last ON last.playerID = r.playerID AND last.year = r.prev_year
 )
 SELECT year, tmID,
        AVG(age) AS avg_age,
+       AVG(height) AS avg_height,
+       AVG(weight) AS avg_weight,
        COALESCE(SUM(last_Pts), 0) AS last_season_pts,
        AVG(CASE WHEN pts_order <= 3 AND last_GP > 0 THEN last_Pts * 1.0 / last_GP END) AS top3_pts_pg,
        SUM(last_G >= 20) AS n_20_goal_players,
-       SUM(awards) AS player_awards
+       SUM(awards) AS player_awards,
+       SUM(last_PIM) * 1.0 / NULLIF(SUM(last_GP), 0) AS players_pim_pg
 FROM players
 WHERE pts_order <= 18
 GROUP BY year, tmID;
@@ -160,8 +186,8 @@ FROM stints st;
 
 query = f"""
 WITH seasons AS (
-    SELECT t.*, p.avg_age, p.last_season_pts, p.top3_pts_pg,
-           p.n_20_goal_players, p.player_awards,
+    SELECT t.*, p.avg_age, p.avg_height, p.avg_weight, p.last_season_pts, p.top3_pts_pg,
+           p.n_20_goal_players, p.player_awards, p.players_pim_pg,
            g.goalie_save_pct, g.goalie_gaa,
            COALESCE(pw.playoff_wins, 0) AS playoff_wins,
            c.max_stint, c.first_coach, c.last_coach,
@@ -186,7 +212,9 @@ known AS (
     SELECT *,
            (group_rank - 1.0) / (group_teams - 1) AS rank_norm,
            LAG(pts_pct) OVER w AS lag_pts_pct,
-           AVG(pts_pct) OVER (w ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS last3_pts_pct
+           AVG(pts_pct) OVER (w ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS last3_pts_pct,
+           AVG(pim_pg) OVER (w ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS last3_pim_pg,
+           AVG(pim_pg) OVER (PARTITION BY year, lgID) AS league_pim_pg
     FROM ranked
     WHERE Pts IS NOT NULL
     WINDOW w AS (PARTITION BY franchID ORDER BY year)
@@ -202,6 +230,8 @@ with_prev AS (
            k.pp_pct AS prev_pp_pct,
            k.pk_pct AS prev_pk_pct,
            k.pim_pg AS prev_pim_pg,
+           k.last3_pim_pg AS avg3_pim_pg,
+           k.league_pim_pg AS prev_league_pim_pg,
            k.made_playoffs AS prev_made_playoffs,
            k.playoff_wins AS prev_playoff_wins,
            k.max_stint > 1 AS prev_coach_changed,
@@ -223,19 +253,21 @@ SELECT
     END AS ranking_group,
 
     -- targets
-    pts_pct, W, goal_diff,
+    pts_pct, Pts, G, W, goal_diff,
     group_rank,
     (group_rank - 1.0) / (group_teams - 1) AS rank_norm,  -- 0 = first, 1 = last
     max_stint > 1 AS coach_changed,
+    PIM, pim_pg,
 
     -- team, last season
     prev_pts_pct, avg3_pts_pct, pts_pct_trend,
     prev_rank_norm, prev_gf_pg, prev_ga_pg, prev_pp_pct, prev_pk_pct, prev_pim_pg,
+    avg3_pim_pg, prev_league_pim_pg,
     prev_made_playoffs, prev_playoff_wins,
 
     -- players of this season, with their stats from the season before
-    avg_age, last_season_pts, top3_pts_pg, n_20_goal_players,
-    player_awards, goalie_save_pct, goalie_gaa,
+    avg_age, avg_height, avg_weight, last_season_pts, top3_pts_pg, n_20_goal_players,
+    player_awards, players_pim_pg, goalie_save_pct, goalie_gaa,
 
     -- coach at the start of the season (career stats only from seasons before)
     first_coach AS coach,
@@ -274,11 +306,15 @@ df = df.rename(columns={
     "name": "team",
     # targets
     "pts_pct": "points_%",
+    "Pts": "points",
+    "G": "games",
     "W": "wins",
     "goal_diff": "goal_difference",
     "group_rank": "rank_in_group",
     "rank_norm": "rank_0_to_1",
     "coach_changed": "coach_changed_in_season",
+    "PIM": "penalty_minutes",
+    "pim_pg": "penalty_minutes_per_game",
     # team, last season
     "prev_pts_pct": "last_season_points_%",
     "avg3_pts_pct": "last_3_seasons_points_%",
@@ -289,14 +325,19 @@ df = df.rename(columns={
     "prev_pp_pct": "last_season_power_play_%",
     "prev_pk_pct": "last_season_penalty_kill_%",
     "prev_pim_pg": "last_season_penalty_minutes_per_game",
+    "avg3_pim_pg": "last_3_seasons_penalty_minutes_per_game",
+    "prev_league_pim_pg": "last_season_league_penalty_minutes_per_game",
     "prev_made_playoffs": "last_season_made_playoffs",
     "prev_playoff_wins": "last_season_playoff_wins",
     # players
     "avg_age": "players_avg_age",
+    "avg_height": "players_avg_height",
+    "avg_weight": "players_avg_weight",
     "last_season_pts": "players_last_season_points",
     "top3_pts_pg": "top3_players_points_per_game",
     "n_20_goal_players": "players_with_20_goals",
     "player_awards": "players_awards",
+    "players_pim_pg": "players_last_season_penalty_minutes_per_game",
     "goalie_save_pct": "goalies_last_season_save_%",
     "goalie_gaa": "goalies_last_season_goals_against_per_60",
     # coach
@@ -308,8 +349,8 @@ df = df.rename(columns={
 })
 
 # yes/no columns and counts as whole numbers (1 instead of 1.0), the rest with 3 decimals
-whole_numbers = ["wins", "goal_difference", "rank_in_group", "coach_changed_in_season", "last_season_made_playoffs",
-                 "last_season_playoff_wins", "players_last_season_points", "players_with_20_goals",
+whole_numbers = ["points", "games", "wins", "goal_difference", "rank_in_group", "coach_changed_in_season", "penalty_minutes",
+                 "last_season_made_playoffs", "last_season_playoff_wins", "players_last_season_points", "players_with_20_goals",
                  "players_awards", "coach_new_this_season", "last_season_coach_changed",
                  "coach_seasons_with_team", "coach_seasons_total", "coach_playoff_wins", "coach_awards"]
 df[whole_numbers] = df[whole_numbers].astype("Int64")
